@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Python Trailhead</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #161b14;
+    --bg-elevated: #1e2419;
+    --bg-card: #212820;
+    --line: #37402f;
+    --text: #ece7d8;
+    --muted: #9aa68a;
+    --muted-dim: #71795f;
+    --accent: #e3b23c;
+    --accent-soft: #4a3f22;
+    --moss: #7c9a5e;
+    --moss-soft: #2b3624;
+    --danger: #c96b4a;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f3efe2;
+      --bg-elevated: #ece5d2;
+      --bg-card: #fbf8ef;
+      --line: #d8cfb4;
+      --text: #24291f;
+      --muted: #5c6350;
+      --muted-dim: #8b8570;
+      --accent: #a9711b;
+      --accent-soft: #ecdbaf;
+      --moss: #4c6b37;
+      --moss-soft: #dbe6cd;
+      --danger: #a3492c;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f3efe2;
+    --bg-elevated: #ece5d2;
+    --bg-card: #fbf8ef;
+    --line: #d8cfb4;
+    --text: #24291f;
+    --muted: #5c6350;
+    --muted-dim: #8b8570;
+    --accent: #a9711b;
+    --accent-soft: #ecdbaf;
+    --moss: #4c6b37;
+    --moss-soft: #dbe6cd;
+    --danger: #a3492c;
+  }
+
+  html, body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  .headline, h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; }
+  code, .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+  a { color: inherit; }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 20px 100px;
+  }
+
+  /* ---- Top bar ---- */
+  .topbar {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .topbar-inner .mark { font-size: 20px; }
+  .topbar-inner .name { font-weight: 600; font-size: 15px; flex: 1; min-width: 0; }
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    border-radius: 999px;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ---- Hero ---- */
+  .hero {
+    padding: 44px 0 8px;
+  }
+  .kicker {
+    color: var(--moss);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+  h1.headline {
+    font-size: clamp(32px, 6vw, 46px);
+    font-weight: 600;
+    line-height: 1.08;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+  .hero p.lede {
+    color: var(--muted);
+    font-size: 16.5px;
+    max-width: 58ch;
+    margin: 0 0 28px;
+  }
+
+  /* ---- Progress readout ---- */
+  .progress-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    margin-bottom: 36px;
+  }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .progress-top .pct {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .progress-top .pct-label { color: var(--muted); font-size: 13.5px; }
+  .progress-track {
+    position: relative;
+    height: 10px;
+    background: var(--bg-elevated);
+    border-radius: 999px;
+    overflow: visible;
+    border: 1px solid var(--line);
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--moss), var(--accent));
+    border-radius: 999px;
+    transition: width 0.5s cubic-bezier(.3,.8,.4,1);
+  }
+  .progress-marker {
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    transition: left 0.5s cubic-bezier(.3,.8,.4,1);
+  }
+  .progress-stats {
+    display: flex;
+    gap: 22px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .progress-stats div { font-size: 13px; color: var(--muted-dim); }
+  .progress-stats strong { color: var(--text); font-weight: 600; }
+
+  /* ---- Tabs ---- */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 10px 4px;
+    margin-right: 22px;
+    cursor: pointer;
+    position: relative;
+    top: 1px;
+  }
+  .tab-btn.active {
+    color: var(--text);
+    border-bottom: 2px solid var(--accent);
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ---- Stage / trail list ---- */
+  .stage {
+    position: relative;
+    padding-left: 36px;
+    margin-bottom: 34px;
+  }
+  .stage::before {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: 34px;
+    bottom: -18px;
+    width: 2px;
+    background: var(--line);
+  }
+  .stage:last-child::before { display: none; }
+  .stage-num {
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .stage.complete .stage-num {
+    background: var(--moss-soft);
+    border-color: var(--moss);
+    color: var(--moss);
+  }
+  .stage-head { margin-bottom: 4px; }
+  .stage-title {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 2px;
+  }
+  .stage-sub { color: var(--muted); font-size: 13.5px; margin: 0 0 14px; }
+
+  .topic {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .topic:last-child { border-bottom: none; }
+  .topic input[type=checkbox] {
+    margin-top: 3px;
+    width: 17px; height: 17px;
+    accent-color: var(--moss);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .topic label { cursor: pointer; flex: 1; }
+  .topic .t-title {
+    font-weight: 500;
+    font-size: 15px;
+    display: block;
+  }
+  .topic .t-desc {
+    color: var(--muted);
+    font-size: 13.5px;
+    margin-top: 2px;
+  }
+  .topic.checked .t-title { color: var(--muted-dim); text-decoration: line-through; text-decoration-color: var(--line); }
+
+  /* ---- Projects ---- */
+  .proj-intro { color: var(--muted); font-size: 15px; margin-bottom: 26px; max-width: 58ch; }
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .project-card.done { border-color: var(--moss); }
+  .project-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .project-title { font-size: 16.5px; font-weight: 600; margin: 0 0 6px; }
+  .project-tag {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .project-desc { color: var(--muted); font-size: 14px; margin: 0 0 10px; }
+  .project-skills { color: var(--muted-dim); font-size: 12.5px; margin: 0 0 12px; }
+  .project-skills span { color: var(--moss); }
+  .mark-btn {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .mark-btn.done { border-color: var(--moss); color: var(--moss); background: var(--moss-soft); }
+
+  /* ---- Explore tracks ---- */
+  .explore-intro { color: var(--muted); font-size: 15px; margin-bottom: 26px; max-width: 58ch; }
+  .track-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+  }
+  .track-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .track-title { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
+  .track-time { font-size: 12.5px; color: var(--muted-dim); white-space: nowrap; }
+  .track-pitch { color: var(--muted); font-size: 14px; margin: 6px 0 14px; }
+  .track-task {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .track-task:last-child { border-bottom: none; }
+  .track-task input { margin-top: 3px; width: 16px; height: 16px; accent-color: var(--moss); cursor: pointer; }
+  .track-task label { font-size: 14px; cursor: pointer; }
+  .track-task.checked label { color: var(--muted-dim); text-decoration: line-through; text-decoration-color: var(--line); }
+
+  /* ---- Tips ---- */
+  .tips {
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+    padding: 22px 24px;
+    margin-top: 6px;
+    border: 1px solid var(--line);
+  }
+  .tips h3 { font-size: 17px; margin: 0 0 10px; }
+  .tips p { color: var(--muted); font-size: 14.5px; margin: 0 0 10px; }
+  .tips p:last-child { margin-bottom: 0; }
+
+  footer {
+    text-align: center;
+    color: var(--muted-dim);
+    font-size: 12.5px;
+    margin-top: 50px;
+  }
+
+  @media (max-width: 480px) {
+    .wrap { padding: 0 16px 90px; }
+    .hero { padding-top: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="mark">🐍</span>
+    <span class="name">Python Trailhead</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">◐</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <p class="kicker">A self-paced route from zero to shipping real projects</p>
+    <h1 class="headline">Learn Python by walking the trail, not staring at the map.</h1>
+    <p class="lede">Seven stages of fundamentals, each paired with a project the moment you have the skill for it. Check things off as you go — your progress is saved right here in the page.</p>
+  </div>
+
+  <div class="progress-panel">
+    <div class="progress-top">
+      <div>
+        <span class="pct" id="pctText">0%</span>
+        <span class="pct-label">of the trail covered</span>
+      </div>
+      <div class="progress-stats" style="margin:0;">
+        <div><strong id="topicsCount">0/0</strong> topics</div>
+        <div><strong id="projectsCount">0/0</strong> projects</div>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+      <div class="progress-marker" id="progressMarker">🥾</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="trail">The Trail</button>
+    <button class="tab-btn" data-tab="projects">Basecamps</button>
+    <button class="tab-btn" data-tab="explore">Explore Tracks</button>
+    <button class="tab-btn" data-tab="tips">Staying On It</button>
+  </div>
+
+  <div class="panel active" id="panel-trail"></div>
+  <div class="panel" id="panel-projects"></div>
+  <div class="panel" id="panel-explore"></div>
+
+  <div class="panel" id="panel-tips">
+    <div class="tips">
+      <h3>Why this fizzles out (and how to not let it)</h3>
+      <p>Last time you practiced "from scratch" for a few days and drifted. That almost always means the practice was disconnected from a reason to open the editor again tomorrow. This trail fixes that in three ways: stages are small enough to clear in one sitting, every stage points at a real project instead of another exercise, and your progress is visible so you can see the trail behind you.</p>
+      <h3>Ground rules that actually work</h3>
+      <p><strong style="color:var(--text)">Twenty minutes beats two hours.</strong> A short daily session you actually do beats a long one you plan and skip. If you only have ten minutes, open this page and check the next topic's description — that counts.</p>
+      <p><strong style="color:var(--text)">Don't finish a stage without starting its project.</strong> Reading about loops doesn't stick. Writing the guessing game does. Move to "Basecamps" the moment a stage feels done, even if you're shaky.</p>
+      <p><strong style="color:var(--text)">Expect to get stuck — that's the work.</strong> Getting an error, googling it, and fixing it is the actual skill of programming. It's not a sign you're doing it wrong.</p>
+      <p><strong style="color:var(--text)">Miss a day without penalty.</strong> There's no streak to protect here on purpose. Come back and pick up exactly where the trail left off.</p>
+      <h3>If you keep forgetting what you already built</h3>
+      <p>Finishing a project and then forgetting it isn't a coverage gap — it's what happens when nothing forces you to retrieve what you learned. Reading your own old code doesn't rebuild the skill; writing it again from memory does.</p>
+      <p><strong style="color:var(--text)">Before starting each new project, rebuild your last one from a blank file, no peeking.</strong> Ten minutes, no notes. Whatever you can't recall is exactly what to re-read before moving on.</p>
+      <p><strong style="color:var(--text)">Revisit a finished project a week later and add one feature to it</strong> instead of only moving forward — it forces you to re-read and re-understand code that's gone cold.</p>
+    </div>
+  </div>
+
+  <footer>Your checkmarks are stored privately in this browser only.</footer>
+</div>
+
+<script>
+const STAGES = [
+  {
+    title: "Setup & First Steps",
+    sub: "Get Python running and learn to talk to it.",
+    topics: [
+      ["Install Python and set up a code editor", "Get Python 3 and VS Code (or similar) installed and able to run a file."],
+      ["Use the terminal and the Python REPL", "Run python in a terminal, try expressions live, run a .py file."],
+      ["Variables and core data types", "int, float, str, bool — what they are and when Python picks each."],
+      ["print() and input()", "Get output on screen and read a line of text from the user."],
+      ["Operators and expressions", "Arithmetic, comparison, and how Python evaluates them."],
+      ["Type conversion", "int(), str(), float() and the errors you get when conversion fails."]
+    ]
+  },
+  {
+    title: "Control Flow",
+    sub: "Make your programs branch and repeat.",
+    topics: [
+      ["if / elif / else", "Branch your program's logic based on conditions."],
+      ["Logical operators", "and, or, not, and combining conditions cleanly."],
+      ["while loops", "Repeat while a condition holds; avoiding infinite loops."],
+      ["for loops and range()", "Iterate over sequences and counted ranges."],
+      ["break, continue, pass", "Control loop flow precisely."]
+    ]
+  },
+  {
+    title: "Core Data Structures",
+    sub: "The containers almost every program is built from.",
+    topics: [
+      ["Lists and list methods", "append, insert, remove, sort, slicing."],
+      ["Tuples", "Immutable sequences and when to reach for them."],
+      ["Dictionaries", "Key-value storage, common methods, iterating over items()."],
+      ["Sets", "Uniqueness and fast membership checks."],
+      ["String slicing and methods", "split, join, strip, format, f-strings."],
+      ["List and dict comprehensions", "Building collections in one readable line."]
+    ]
+  },
+  {
+    title: "Functions",
+    sub: "Package logic so you stop repeating yourself.",
+    topics: [
+      ["Defining functions, parameters, return", "The basic shape of reusable logic."],
+      ["Default and keyword arguments", "Flexible function signatures."],
+      ["*args and **kwargs", "Accepting a variable number of arguments."],
+      ["Scope: local vs global", "Where a variable lives and why it matters."],
+      ["Lambda functions", "Small anonymous functions and where they're actually useful."],
+      ["map(), filter(), and basic functional patterns", "Transforming collections without explicit loops."]
+    ]
+  },
+  {
+    title: "Files, Errors & Modules",
+    sub: "Make programs that survive contact with the real world.",
+    topics: [
+      ["Reading and writing files", "open(), context managers (with), text vs binary mode."],
+      ["Working with JSON", "json.load / json.dump for saving structured data."],
+      ["Exception handling", "try / except / finally, and catching specific errors."],
+      ["Modules and imports", "Splitting code across files, the standard library."],
+      ["pip and virtual environments", "Installing packages without wrecking your system Python."]
+    ]
+  },
+  {
+    title: "Object-Oriented Programming",
+    sub: "Model real things as classes with state and behavior.",
+    topics: [
+      ["Classes and objects", "Defining a class, creating instances."],
+      ["__init__ and self", "How instances get their own state."],
+      ["Instance vs class attributes", "The difference and common bugs from mixing them up."],
+      ["Inheritance and polymorphism", "Sharing behavior across related classes."],
+      ["Common dunder methods", "__str__, __repr__, __eq__ and why they matter."],
+      ["Encapsulation basics", "Naming conventions for 'private' attributes."]
+    ]
+  },
+  {
+    title: "Leveling Up",
+    sub: "The skills that separate 'knows Python' from 'can ship things'.",
+    topics: [
+      ["Generators and iterators", "yield, lazy evaluation, and memory-efficient loops."],
+      ["Decorators", "Wrapping functions to add behavior."],
+      ["Calling APIs with requests", "Fetching and parsing real data from the internet."],
+      ["Regular expressions", "Pattern matching with the re module."],
+      ["Testing with pytest", "Writing tests so you trust your own code."],
+      ["Git and GitHub basics", "Committing, pushing, and keeping a portfolio."],
+      ["GUI basics with tkinter", "Windows, buttons, and layout — turning a CLI script into a clickable app."]
+    ]
+  }
+];
+
+const PROJECTS = [
+  {
+    title: "Number Guessing Game",
+    tag: "After Stage 2",
+    desc: "The computer picks a random number; the player guesses until they get it, with 'higher/lower' hints.",
+    skills: ["loops", "conditionals", "random module"]
+  },
+  {
+    title: "Command-Line Calculator",
+    tag: "After Stage 2",
+    desc: "Take an expression from the user and evaluate it — handle bad input without crashing.",
+    skills: ["functions", "error handling", "input parsing"]
+  },
+  {
+    title: "To-Do List (in-memory CLI)",
+    tag: "After Stage 3",
+    desc: "Add, list, complete, and remove tasks from a menu-driven terminal app.",
+    skills: ["lists", "dictionaries", "loops"]
+  },
+  {
+    title: "Text Analyzer",
+    tag: "After Stage 3",
+    desc: "Read a block of text and report word count, most common words, and average word length.",
+    skills: ["strings", "dictionaries", "comprehensions"]
+  },
+  {
+    title: "Contact Book (saved to file)",
+    tag: "After Stage 5",
+    desc: "A to-do list that survives a restart — persist contacts to a JSON file and reload them.",
+    skills: ["file I/O", "JSON", "functions"]
+  },
+  {
+    title: "Expense Tracker",
+    tag: "After Stage 5",
+    desc: "Log expenses by category to a CSV/JSON file, then summarize totals and spot overspending.",
+    skills: ["file I/O", "exceptions", "data summarizing"]
+  },
+  {
+    title: "Quiz Game, Object-Oriented",
+    tag: "After Stage 6",
+    desc: "Rebuild a quiz app using a Question class and a Quiz class that tracks score across rounds.",
+    skills: ["classes", "encapsulation", "control flow"]
+  },
+  {
+    title: "Weather Lookup App",
+    tag: "After Stage 7",
+    desc: "Call a public weather API by city name and print a clean, readable forecast.",
+    skills: ["requests", "JSON", "error handling"]
+  },
+  {
+    title: "Headline Scraper",
+    tag: "After Stage 7",
+    desc: "Pull the top headlines from a news site and save them to a file, using regex to clean the text.",
+    skills: ["requests", "regex", "file I/O"]
+  },
+  {
+    title: "GUI Calculator (tkinter)",
+    tag: "After Stage 7",
+    desc: "Rebuild your command-line calculator with clickable number buttons and a display, using tkinter.",
+    skills: ["tkinter", "event handling", "functions"]
+  },
+  {
+    title: "GUI To-Do List (tkinter)",
+    tag: "After Stage 7",
+    desc: "Take the to-do list from Stage 3 and give it a real window: add/complete/delete tasks by clicking, not typing commands.",
+    skills: ["tkinter", "file I/O", "classes"]
+  },
+  {
+    title: "Capstone: Personal Library API",
+    tag: "Capstone",
+    desc: "A small Flask app to add, list, and search books you own, tested with pytest and pushed to GitHub.",
+    skills: ["Flask", "testing", "git", "everything above"]
+  }
+];
+
+const TRACKS = [
+  {
+    title: "Web Development",
+    time: "~1 week, 2 hrs/day",
+    pitch: "You'll find out fast if you like this if you enjoy seeing something live in a browser and shaping how it looks and behaves.",
+    tasks: [
+      "Build a tiny Flask blog: home page listing posts, a page per post",
+      "Store posts in SQLite instead of a Python list",
+      "Add a form to create a new post without touching the database directly",
+      "Style it with basic CSS so it doesn't look bare",
+      "Deploy it somewhere public (Render, Railway, or PythonAnywhere)"
+    ]
+  },
+  {
+    title: "Data & Automation",
+    time: "~1 week, 2 hrs/day",
+    pitch: "This is the track if you like turning messy real-world information into something useful, or automating a task you're sick of doing by hand.",
+    tasks: [
+      "Find a CSV you actually care about (spending, sports stats, weather — anything)",
+      "Load and clean it with pandas: fix types, drop junk rows",
+      "Produce 3 charts that answer a real question about the data",
+      "Write a script that automates one boring repetitive task (renaming files, merging spreadsheets, generating a weekly summary)",
+      "Schedule it to run on its own (cron, Task Scheduler, or a simple loop)"
+    ]
+  },
+  {
+    title: "Software / Backend Engineering",
+    time: "~1 week, 2 hrs/day",
+    pitch: "This is the track if you liked the 'figuring out the logic' part more than the visual part — building tools other code or people depend on.",
+    tasks: [
+      "Solve 10 short algorithm problems (arrays, strings, dictionaries — easy tier)",
+      "Package one of your earlier projects as an installable CLI tool (argparse or click)",
+      "Add a real test suite to it with pytest, not just manual checks",
+      "Write a README explaining how to install and use it",
+      "Try containerizing it with a basic Dockerfile"
+    ]
+  }
+];
+
+const STORE_KEY = "python-trailhead-progress-v1";
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) { /* ignore, start fresh */ }
+  return { topics: {}, projects: {}, tracks: {} };
+}
+function saveState() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch (e) { /* storage unavailable; progress just won't persist */ }
+}
+
+let state = loadState();
+
+function topicId(si, ti) { return "s" + si + "t" + ti; }
+
+function renderTrail() {
+  const el = document.getElementById("panel-trail");
+  el.innerHTML = "";
+  STAGES.forEach((stage, si) => {
+    const total = stage.topics.length;
+    let doneCount = 0;
+    stage.topics.forEach((_, ti) => { if (state.topics[topicId(si, ti)]) doneCount++; });
+    const complete = doneCount === total;
+
+    const wrap = document.createElement("div");
+    wrap.className = "stage" + (complete ? " complete" : "");
+    wrap.innerHTML = `
+      <div class="stage-num">${complete ? "✓" : si + 1}</div>
+      <div class="stage-head">
+        <p class="stage-title">${stage.title}</p>
+        <p class="stage-sub">${stage.sub} · ${doneCount}/${total} done</p>
+      </div>
+    `;
+    const list = document.createElement("div");
+    stage.topics.forEach(([title, desc], ti) => {
+      const id = topicId(si, ti);
+      const checked = !!state.topics[id];
+      const row = document.createElement("div");
+      row.className = "topic" + (checked ? " checked" : "");
+      row.innerHTML = `
+        <input type="checkbox" id="${id}" ${checked ? "checked" : ""}>
+        <label for="${id}">
+          <span class="t-title">${title}</span>
+          <span class="t-desc">${desc}</span>
+        </label>
+      `;
+      row.querySelector("input").addEventListener("change", (e) => {
+        state.topics[id] = e.target.checked;
+        saveState();
+        renderTrail();
+        updateProgress();
+      });
+      list.appendChild(row);
+    });
+    wrap.appendChild(list);
+    el.appendChild(wrap);
+  });
+}
+
+function renderProjects() {
+  const el = document.getElementById("panel-projects");
+  el.innerHTML = `<p class="proj-intro">Ten projects, ordered so each one only needs skills you've already checked off on the trail. Building one badly beats reading about it perfectly.</p>`;
+  PROJECTS.forEach((p, pi) => {
+    const done = !!state.projects[pi];
+    const card = document.createElement("div");
+    card.className = "project-card" + (done ? " done" : "");
+    card.innerHTML = `
+      <div class="project-top">
+        <p class="project-title">${p.title}</p>
+        <span class="project-tag">${p.tag}</span>
+      </div>
+      <p class="project-desc">${p.desc}</p>
+      <p class="project-skills">Uses: <span>${p.skills.join(" · ")}</span></p>
+      <button class="mark-btn ${done ? "done" : ""}">${done ? "✓ Built it" : "Mark as built"}</button>
+    `;
+    card.querySelector("button").addEventListener("click", () => {
+      state.projects[pi] = !state.projects[pi];
+      saveState();
+      renderProjects();
+      updateProgress();
+    });
+    el.appendChild(card);
+  });
+}
+
+function trackTaskId(tri, ti) { return "tr" + tri + "_" + ti; }
+
+function renderExplore() {
+  const el = document.getElementById("panel-explore");
+  el.innerHTML = `<p class="explore-intro">Once the core trail feels solid, spend about a week on each of these before picking a direction to specialize in. Don't read them — build them. The one you keep tinkering with after the checklist is done is your answer.</p>
+    <ul style="color:var(--muted); font-size:14.5px; max-width:58ch; margin:0 0 26px; padding-left:20px; line-height:1.7;">
+      <li><strong style="color:var(--text)">Web Development</strong> — a small Flask blog with a real database, deployed publicly</li>
+      <li><strong style="color:var(--text)">Data & Automation</strong> — cleaning a dataset you actually care about, plus automating one task you're tired of doing by hand</li>
+      <li><strong style="color:var(--text)">Software/Backend</strong> — algorithm practice, packaging a CLI tool, real tests, a Dockerfile</li>
+    </ul>`;
+  TRACKS.forEach((track, tri) => {
+    const doneCount = track.tasks.filter((_, ti) => state.tracks[trackTaskId(tri, ti)]).length;
+    const card = document.createElement("div");
+    card.className = "track-card";
+    card.innerHTML = `
+      <div class="track-head">
+        <p class="track-title">${track.title}</p>
+        <span class="track-time">${track.time} · ${doneCount}/${track.tasks.length}</span>
+      </div>
+      <p class="track-pitch">${track.pitch}</p>
+    `;
+    const list = document.createElement("div");
+    track.tasks.forEach((task, ti) => {
+      const id = trackTaskId(tri, ti);
+      const checked = !!state.tracks[id];
+      const row = document.createElement("div");
+      row.className = "track-task" + (checked ? " checked" : "");
+      row.innerHTML = `<input type="checkbox" id="${id}" ${checked ? "checked" : ""}><label for="${id}">${task}</label>`;
+      row.querySelector("input").addEventListener("change", (e) => {
+        state.tracks[id] = e.target.checked;
+        saveState();
+        renderExplore();
+      });
+      list.appendChild(row);
+    });
+    card.appendChild(list);
+    el.appendChild(card);
+  });
+}
+
+function updateProgress() {
+  const totalTopics = STAGES.reduce((n, s) => n + s.topics.length, 0);
+  const doneTopics = Object.values(state.topics).filter(Boolean).length;
+  const totalProjects = PROJECTS.length;
+  const doneProjects = Object.values(state.projects).filter(Boolean).length;
+  const totalAll = totalTopics + totalProjects;
+  const doneAll = doneTopics + doneProjects;
+  const pct = totalAll ? Math.round((doneAll / totalAll) * 100) : 0;
+
+  document.getElementById("pctText").textContent = pct + "%";
+  document.getElementById("topicsCount").textContent = doneTopics + "/" + totalTopics;
+  document.getElementById("projectsCount").textContent = doneProjects + "/" + totalProjects;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressMarker").style.left = pct + "%";
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+  });
+});
+
+const themeToggle = document.getElementById("themeToggle");
+themeToggle.addEventListener("click", () => {
+  const root = document.documentElement;
+  const current = root.getAttribute("data-theme");
+  if (current === "dark") { root.setAttribute("data-theme", "light"); }
+  else if (current === "light") { root.removeAttribute("data-theme"); }
+  else { root.setAttribute("data-theme", "dark"); }
+});
+
+renderTrail();
+renderProjects();
+renderExplore();
+updateProgress();
+</script>
+</body>
+</html>
